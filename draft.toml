@@ -1,0 +1,8 @@
+[environments]
+  [environments.development]
+    name = "brigly"
+    namespace = "default"
+    wait = false
+    watch = false
+    watch-delay = 2
+    auto-connect = false

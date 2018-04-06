@@ -1,20 +1,20 @@
 {
-  "name": "brigly",
+  "name": "brigade-gateway",
   "version": "0.1.0",
-  "description": "The Brigade SlackBot",
+  "description": "HTTP(S) Brigade Gateway",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "brigade",
-    "slack"
-  ],
-  "author": "technosophos",
   "license": "MIT",
   "dependencies": {
-    "@slack/client": "^4.0.0",
+    "@aoberoi/passport-slack": "^1.0.5",
+    "@kubernetes/client-node": "^0.2.1",
+    "@slack/client": "^4.1.0",
     "@slack/events-api": "^1.0.1",
-    "express": "^4.16.2"
+    "convict": "^4.2.0",
+    "express": "^4.16.3",
+    "passport": "^0.4.0",
+    "ulid": "^2.3.0"
+  },
+  "scripts": {
+    "start": "node index.js"
   }
 }
