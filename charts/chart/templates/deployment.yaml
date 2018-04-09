@@ -19,12 +19,23 @@ spec:
       annotations:
         buildID: {{ .Values.buildID }}
     spec:
+      volumes:
+        - name: project
+          secret:
+            secretName: {{ .Values.project }}
+            items:
+            - key: secrets
+              path: config.json
+              mode: 511
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.internalPort }}
+          volumeMounts:
+            - name: project
+              mountPath: "/etc/app"
           env:
             - name: GATEWAY_PORT
               value: {{ .Values.service.internalPort | quote }}

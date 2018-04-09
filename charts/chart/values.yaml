@@ -12,6 +12,9 @@ env:
   - name: EXAMPLE
     value: "hello world"
 
+# REQUIRED: your project ID
+project: brigade-209a40dd897883b213e679b375a46baa70e102aeba79da69a68e53
+
 replicaCount: 1
 image:
   repository: nginx
@@ -23,18 +26,18 @@ service:
   externalPort: 80
   internalPort: 8080
 ingress:
-  enabled: false
+  enabled: true
   # Used to create an Ingress record.
   hosts:
-    - chart-example.local
+    - brigly.technosophos.me
   annotations:
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
   tls:
     # Secrets must be manually created in the namespace.
-    # - secretName: chart-example-tls
-    #   hosts:
-    #     - chart-example.local
+    - secretName: brigly-tls
+      hosts:
+      - brigly.technosophos.me
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little

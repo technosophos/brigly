@@ -8,34 +8,39 @@ const SlackStrategy = require("@aoberoi/passport-slack").default.Strategy;
 const { createSlackEventAdapter } = require("@slack/events-api");
 const { WebClient } = require('@slack/client');
 
-const slackEvents = createSlackEventAdapter(process.env.SLACK_VERIFICATION_TOKEN)
-const slackClient = new WebClient(process.env.SLACK_BOT_TOKEN)
-
 var config = convict({
     // Example of a custom var. See chart/values.yaml for the definition.
     project: {
-        doc: "The Brigade project that this bot is connecte to.",
+        doc: "The Brigade project that this bot is connected to.",
         // Default is deis/empty-testbed
         default: "brigade-830c16d4aaf6f5490937ad719afd8490a5bcbef064d397411043ac",
         env: "GATEWAY_PROJECT"
     },
+
+    // These actually get loaded out of the project.
     slackBotToken: {
         doc: "Bot token from Slack",
         default: "botToken",
-        env: "SLACK_BOT_TOKEN"
+        env: "SLACK_BOT_TOKEN",
+        sensitive: true,
     },
-    /*
     slackClientID: {
         doc: "Client ID for authenticating to Slack",
-        default: "",
+        default: "clientID",
         env: "SLACK_CLIENT_ID"
     },
     slackClientSecret: {
         doc: "Secret for authenticating to Slack",
-        default: "",
-        env: "SLACK_CLIENT_SECRET"
+        default: "clientSecret",
+        env: "SLACK_CLIENT_SECRET",
+        sensitive: true,
     },
-    */
+    slackVerificationToken: {
+        doc: "Verification token for slack app",
+        default: "verificatioNToken",
+        env: "SLACK_VERIFICATION_TOKEN",
+        sensitive: true,
+    },
 
     // Predefined vars.
     port: {
@@ -61,10 +66,14 @@ var config = convict({
         env: "GATEWAY_NAME"
     }
 });
+config.loadFile("/etc/app/config.json")
 config.validate({allowed: 'strict'});
+
 const namespace = config.get("namespace");
 const project = config.get("project");
-const eventName = "slack_app_mention";
+const eventName = "app_mention";
+const slackEvents = createSlackEventAdapter(config.get("slackVerificationToken"))
+const slackClient = new WebClient(config.get("slackBotToken"));
 
 const app = express();
 app.use(bodyParser.json());
@@ -74,13 +83,13 @@ slackEvents.on("error", console.error);
 slackEvents.on("app_mention", (event) => {
     // TODO: Validate that the team OAuthed.
     let envelope = {
-        // Load this from the project.
-        //botToken: config.get("slackBotToken"),
+        // It's not totally clear to me if we need this.
         verificationToken: botAuthorizations[event.team_id],
         event: event
     }
 
     let brigEvent = new Event(namespace);
+    brigEvent.event_provider = "slack";
     brigEvent.create(eventName, project, JSON.stringify(envelope)).then(() => {
         console.log("accepted")
     }).catch((e) => {
@@ -109,6 +118,7 @@ app.get('/auth/slack', passport.authenticate('slack', {
 app.get('/auth/slack/callback',
     passport.authenticate('slack', { session: false }),
     (req, res) => {
+      console.log("/auth/slack/callback executed");
       res.send('<p>Greet and React was successfully installed on your team.</p>');
     },
     (err, req, res, next) => {
