@@ -114,7 +114,7 @@ Now re-load these values with `draft up` or `helm upgrade`.
 
 Now, on `api.slack.com`, go to the _Event Subscriptions_ page and _Enable Events_.
 Then, in the _Request URL_ field, add a full URL to your Brigly gateway:
-`htts://$YOUR_DOMAIN/slack/evets` and click _Verify_.
+`htts://$YOUR_DOMAIN/slack/events` and click _Verify_.
 
 Once it has verified, scroll down to _Subscribe to Bot Events_ and click
 _Add Bot User Event_. Choose `app_mention` from the list. Then click _Save Changes_
