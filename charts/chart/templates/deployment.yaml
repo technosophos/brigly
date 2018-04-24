@@ -17,7 +17,7 @@ spec:
         release: {{ .Release.Name }}
         draft: {{ default "draft-app" .Values.draft }}
       annotations:
-        buildID: {{ .Values.buildID }}
+        buildID: {{ default "none" .Values.buildID }}
     spec:
       volumes:
         - name: project
@@ -37,6 +37,8 @@ spec:
             - name: project
               mountPath: "/etc/app"
           env:
+            - name: GATEWAY_PROJECT
+              value: {{ .Values.project | quote }}
             - name: GATEWAY_PORT
               value: {{ .Values.service.internalPort | quote }}
             - name: GATEWAY_NAMESPACE

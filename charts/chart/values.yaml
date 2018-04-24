@@ -8,17 +8,15 @@
 # - GATEWAY_NAMESPACE (set to the app's Kubernetes namespace)
 # - GATEWAY_NAMED (set to the name of this app)
 # - GATEWAY_IP (set to the IP of the pod)
-env:
-  - name: EXAMPLE
-    value: "hello world"
 
-# REQUIRED: your project ID
+# Required
+# The project that stores the Brigade.js file that has your Brigly responders.
 project: brigade-209a40dd897883b213e679b375a46baa70e102aeba79da69a68e53
 
 replicaCount: 1
 image:
-  repository: nginx
-  tag: stable
+  repository: technosophos/brigly-dev
+  tag: edge
   pullPolicy: IfNotPresent
 service:
   name: nginx

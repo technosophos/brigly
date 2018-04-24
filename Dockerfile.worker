@@ -1,0 +1,2 @@
+FROM deis/brigade-worker:latest
+RUN yarn add @slack/client

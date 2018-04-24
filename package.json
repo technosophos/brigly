@@ -15,6 +15,7 @@
     "ulid": "^2.3.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "worker": "docker build -f Dockerfile.worker -t technosophos/brigly-worker:latest . && docker push technosophos/brigly-worker"
   }
 }

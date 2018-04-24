@@ -91,7 +91,7 @@ slackEvents.on("app_mention", (event) => {
     let brigEvent = new Event(namespace);
     brigEvent.event_provider = "slack";
     brigEvent.create(eventName, project, JSON.stringify(envelope)).then(() => {
-        console.log("accepted")
+        console.log(`build ${ brigEvent.build_id }`)
     }).catch((e) => {
         console.error(e);
     });

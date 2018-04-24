@@ -41,6 +41,7 @@ exports.Event = function(ns) {
      */
     this.script = "";
     this.log_level = "";
+    this.build_id = ""
     
     /**
      * Create this event inside of Kubernetes.
@@ -56,8 +57,8 @@ exports.Event = function(ns) {
         // This is a guard to prevent us from creating
         // an event for a project that does not exist.
         return kube.readNamespacedSecret(project, this.namespace).then( () => {
-            let buildId = ulid.ulid().toLowerCase()
-            let buildName = `brigade-${buildId}`
+            this.build_id = ulid.ulid().toLowerCase()
+            let buildName = `brigade-${this.build_id}`
             let secret = new k8s.V1Secret()
             secret.type = "brigade.sh/build"
             secret.metadata = {
@@ -65,7 +66,7 @@ exports.Event = function(ns) {
                 labels: {
                     component: "build",
                     heritage: "brigade",
-                    build: buildId,
+                    build: this.build_id,
                     project: project
                 }
             }
@@ -73,11 +74,12 @@ exports.Event = function(ns) {
                 // TODO: Do we let this info be passed in?
                 commit_id: b64enc(this.commit_id),
                 commit_ref: b64enc(this.commit_ref),
-                build_id: b64enc(buildId),
+                build_id: b64enc(this.build_id),
                 build_name: b64enc(buildName),
                 event_provider: b64enc(this.event_provider),
                 event_type: b64enc(hook),
-                payload: b64enc(payload)
+                payload: b64enc(payload),
+                project_id: b64enc(project)
             }
             if (this.script) {
                 secret.data.script = base64enc(this.script);
@@ -86,7 +88,8 @@ exports.Event = function(ns) {
                 secret.data.log_level = base64enc(this.script);
             }
             return kube.createNamespacedSecret(this.namespace, secret);
-        }).catch(() => {
+        }).catch(e => {
+            console.log(e)
             return Promise.reject(`project ${project} could not be loaded`);
         })
     }

@@ -1,8 +1,12 @@
 [environments]
   [environments.development]
-    name = "brigly"
+    name = "brigly-dev"
     namespace = "default"
     wait = false
     watch = false
     watch-delay = 2
     auto-connect = false
+    set = [
+      "project=brigade-9afa37b976ab4bd116557b613000959d24feb08dfac37fcf6ae3cb"
+    ]
+    custom-tags = ["edge"]
